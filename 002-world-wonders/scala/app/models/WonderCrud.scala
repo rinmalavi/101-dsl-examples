@@ -1,42 +1,54 @@
 package models
 
-import com.dslplatform.api.patterns.PersistableRepository
+import com.dslplatform.api.client.{Bootstrap, ClientPersistableRepository, CrudProxy, JsonSerialization}
 import models.WorldWonders.Wonder
 
 import scala.concurrent.Future
 
-object WonderCrud {
-  private lazy val wonderRepository = locator.resolve[PersistableRepository[Wonder]]
+trait WonderCrud {
+
+  implicit val locator = Bootstrap.init(getClass.getResourceAsStream("/dsl-project.props"))
+  val jsonSerialization = locator.resolve[JsonSerialization]
+
+  private lazy val wonderRepository = new ClientPersistableRepository[Wonder](locator)
+  private lazy val crudProxy = locator.resolve[CrudProxy]
 
   /** Create a new wonder */
-  def create(wonder: Wonder): Future[String] =
+  def createC(wonder: Wonder): Future[String] =
     wonderRepository.insert(wonder)
 
   /** Create new wonders */
-  def create(wonders: Seq[Wonder]): Future[IndexedSeq[String]] =
+  def createC(wonders: Seq[Wonder]): Future[IndexedSeq[String]] =
     wonderRepository.insert(wonders)
 
   /** Find existing wonder by name (URI) */
-  def read(uri: String): Future[Wonder] =
+  def readC(uri: String): Future[Wonder] =
     wonderRepository.find(uri)
 
   /** Find all existing wonders */
-  def readAll: Future[IndexedSeq[Wonder]] =
+  def readAllC: Future[IndexedSeq[Wonder]] = {
     wonderRepository.search
+  }
 
   /** Update an existing wonder */
-  def update(wonder: Wonder): Future[Unit] =
+  def updateC(wonder: Wonder): Future[Unit] =
     wonderRepository.update(wonder)
 
   /** Update a list of existing wonders */
-  def update(wonders: Seq[Wonder]): Future[Unit] =
+  def updateC(wonders: Seq[Wonder]): Future[Unit] =
     wonderRepository.update(wonders)
 
   /** Delete a wonder */
-  def delete(wonder: Wonder): Future[Unit] =
-    wonderRepository.delete(wonder)
+  def deleteC(wonderURI: String): Future[Unit] =
+    crudProxy.delete(wonderURI) //wonderRepository.delete(wonder)
 
   /** Delete a list of wonders */
-  def delete(wonders: Seq[Wonder]): Future[Unit] =
-    wonderRepository.delete(wonders)
+  def deleteC(wondersURIs: Seq[String]): Future[Unit] = {
+    wonderRepository.find(wondersURIs).flatMap(wonderRepository.delete)
+  }
+
+  /** Delete all wonders */
+  def deleteAllC(): Future[Unit] = {
+    wonderRepository.search().flatMap(wonderRepository.delete)
+  }
 }

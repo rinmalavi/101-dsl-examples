@@ -1,16 +1,12 @@
-packAutoSettings
-
-Revolver.settings
-
 name := "002 [Scala] World Wonders"
 
 version := "0.1.0"
 
-scalaVersion := "2.11.2"
+scalaVersion := "2.11.4"
 
-lazy val root = project in file(".") enablePlugins(PlayScala)
+//Revolver.settings
 
-packMain := Map("main" -> "play.core.server.NettyServer")
+lazy val root = project in file(".") enablePlugins PlayScala
 
 libraryDependencies ++= Seq(
   "com.dslplatform" %% "dsl-client-scala" % "0.9.2"
