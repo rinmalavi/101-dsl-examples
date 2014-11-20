@@ -36,7 +36,7 @@ class RestHelper(val host: String, val port: Int) {
   }
 
   private def send(svc: Req): Response = {
-    val r = Http(svc > respParser)
+    val r = Http(svc.addHeader("Content-Type", "application/json") > respParser)
     Await.result(r, 10 seconds)
   }
 

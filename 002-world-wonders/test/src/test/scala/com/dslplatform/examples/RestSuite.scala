@@ -79,4 +79,5 @@ class RestSuite extends SuiteBase {
       foundWonderList should have size 0
     }
   }
+
 }

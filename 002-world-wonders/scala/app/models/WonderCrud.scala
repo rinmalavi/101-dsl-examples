@@ -15,8 +15,8 @@ trait WonderCrud {
   private lazy val crudProxy = locator.resolve[CrudProxy]
 
   /** Create a new wonder */
-  def createC(wonder: Wonder): Future[String] =
-    wonderRepository.insert(wonder)
+  def createC(wonder: Wonder): Future[Wonder] =
+    crudProxy.create(wonder)
 
   /** Create new wonders */
   def createC(wonders: Seq[Wonder]): Future[IndexedSeq[String]] =
@@ -48,8 +48,20 @@ trait WonderCrud {
     wonderRepository.find(wondersURIs).flatMap(wonderRepository.delete)
   }
 
+  /** Replace all wonders */
+  def replaceAllC(): Future[IndexedSeq[Wonder]] = {
+    val is = getClass.getClassLoader.getResourceAsStream("wonders.json")
+    val defaultWondersBA = Iterator.continually(is.read).takeWhile(-1 !=).map(_.toByte).toArray
+    val defaultWonders = jsonSerialization.deserializeList[Wonder](defaultWondersBA)
+    deleteAllC().flatMap{
+      _ => wonderRepository.insert(defaultWonders).flatMap{
+      _ => readAllC}
+    }
+  }
+
   /** Delete all wonders */
   def deleteAllC(): Future[Unit] = {
     wonderRepository.search().flatMap(wonderRepository.delete)
   }
+
 }
