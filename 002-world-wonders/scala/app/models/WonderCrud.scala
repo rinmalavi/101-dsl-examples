@@ -1,6 +1,7 @@
 package models
 
 import com.dslplatform.api.client.{Bootstrap, ClientPersistableRepository, CrudProxy, JsonSerialization}
+import com.dslplatform.api.patterns.PersistableRepository
 import models.WorldWonders.Wonder
 
 import scala.concurrent.Future
@@ -10,7 +11,7 @@ trait WonderCrud {
   implicit val locator = Bootstrap.init(getClass.getResourceAsStream("/dsl-project.props"))
   val jsonSerialization = locator.resolve[JsonSerialization]
 
-  private lazy val wonderRepository = new ClientPersistableRepository[Wonder](locator)
+  private lazy val wonderRepository = new ClientPersistableRepository[Wonder](locator) // what should be here: locator.resolve[PersistableRepository[Wonder]]
   private lazy val crudProxy = locator.resolve[CrudProxy]
 
   /** Create a new wonder */
