@@ -16,3 +16,5 @@ libraryDependencies ++= Seq(
 )
 
 unmanagedResources in Compile += baseDirectory.value / ".." / "wonders.json"
+
+unmanagedResourceDirectories in Compile += baseDirectory.value / ".." / "html"

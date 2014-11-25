@@ -9,3 +9,7 @@ DELETE      /wonders/:URI       controllers.Rest.delete(URI: String)
 
 GET         /wonders            controllers.Rest.readAll
 DELETE      /wonders            controllers.Rest.deleteAll()
+
+GET         /                   controllers.Assets.at(path ="/", file="index.html")
+
+GET         /*file              controllers.Assets.at(path ="/", file)
