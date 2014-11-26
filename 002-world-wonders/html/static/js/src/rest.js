@@ -40,7 +40,7 @@ RestClient.prototype.request = function(path, method, reqData, callback) {
     url: url,
     data: reqJSON,
     success: function(resJSON) {
-      var resData = $.parseJSON(resJSON);
+      var resData = resJSON;
       callback(resData)
     }
   });
